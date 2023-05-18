@@ -81,7 +81,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               builder: (context) => const SignUpScreen(),
                             ));
                       },
-                      child: Text('Register')),
+                      child: const Text('Register')),
                 )
               ],
             ),
@@ -98,7 +98,31 @@ class _SignInScreenState extends State<SignInScreen> {
                             builder: (context) => const DashBoardScreen(),
                           ),
                           (route) => false);
+                    } else {
+                      final snackBar = SnackBar(
+                        content: const Text('please check your account'),
+                        action: SnackBarAction(
+                          label: 'Undo',
+                          onPressed: () {
+                            // Some code to undo the change.
+                          },
+                        ),
+                      );
+
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     }
+                  } else {
+                    final snackBar = SnackBar(
+                      content: const Text('Please enter data....!!!'),
+                      action: SnackBarAction(
+                        label: 'Undo',
+                        onPressed: () {
+                          // Some code to undo the change.
+                        },
+                      ),
+                    );
+
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   }
                 },
                 child: const Text('Sign In'))

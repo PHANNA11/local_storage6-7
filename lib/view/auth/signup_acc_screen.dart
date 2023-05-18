@@ -106,7 +106,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                             (route) => false);
                       });
+                    } else {
+                      final snackBar = SnackBar(
+                        content: const Text('Incorrect password...!!!'),
+                        action: SnackBarAction(
+                          label: 'Undo',
+                          onPressed: () {
+                            // Some code to undo the change.
+                          },
+                        ),
+                      );
+
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     }
+                  } else {
+                    final snackBar = SnackBar(
+                      content: const Text(
+                          'Please enter something...,  data is empty!!!'),
+                      action: SnackBarAction(
+                        label: 'Undo',
+                        onPressed: () {
+                          // Some code to undo the change.
+                        },
+                      ),
+                    );
+
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   }
                 },
                 child: const Text('Sign Up'))
