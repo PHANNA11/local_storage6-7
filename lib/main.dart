@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:local_storage/view/auth/signin_acc_screen.dart';
+import 'package:local_storage/sharePreference/view/auth/signin_acc_screen.dart';
 
 void main(List<String> args) {
   runApp(MyApp());

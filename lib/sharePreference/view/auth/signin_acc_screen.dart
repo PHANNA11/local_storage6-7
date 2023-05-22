@@ -2,9 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:local_storage/view/auth/signup_acc_screen.dart';
-import 'package:local_storage/view/dashboard/view/dashboard_screen.dart';
+import 'package:local_storage/sharePreference/view/auth/signup_acc_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../dashboard/view/dashboard_screen.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
