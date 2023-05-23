@@ -27,5 +27,23 @@ class ConnectionDB {
   Future<void> insertProduct(ProductModel pro) async {
     var db = await initDatabase();
     await db.insert(productTable, pro.toMap());
+    print('data was add..');
+  }
+
+  Future<List<ProductModel>> getProductList() async {
+    var db = await initDatabase();
+    List<Map<String, dynamic>> result = await db.query(productTable);
+    return result.map((e) => ProductModel.fromMap(e)).toList();
+  }
+
+  Future<void> deleteProduct(int id) async {
+    var db = await initDatabase();
+    await db.delete(productTable, where: '$fId=?', whereArgs: [id]);
+  }
+
+  Future<void> updateProduct(ProductModel pro) async {
+    var db = await initDatabase();
+    await db.update(productTable, pro.toMap(),
+        where: '$fId=?', whereArgs: [pro.id]);
   }
 }
