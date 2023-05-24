@@ -15,6 +15,12 @@ class MainBoard extends StatefulWidget {
 class _MainBoardState extends State<MainBoard> {
   TextEditingController controller = TextEditingController();
   List<ProductModel> listProduct = [];
+  ProductModel? tempProduct;
+  clearData() {
+    tempProduct = null;
+    controller.text = '';
+  }
+
   getData() async {
     await ConnectionDB().getProductList().then((value) {
       setState(() {
@@ -50,18 +56,32 @@ class _MainBoardState extends State<MainBoard> {
                 elevation: 0,
                 backgroundColor: Colors.white,
                 onPressed: () async {
-                  await ConnectionDB()
-                      .insertProduct(ProductModel(
-                          id: DateTime.now().microsecond,
-                          name: controller.text))
-                      .whenComplete(() => getData());
+                  if (controller.text.isNotEmpty) {
+                    tempProduct == null
+                        ? await ConnectionDB()
+                            .insertProduct(ProductModel(
+                                id: DateTime.now().microsecond,
+                                name: controller.text))
+                            .whenComplete(() => getData())
+                        : await ConnectionDB()
+                            .updateProduct(ProductModel(
+                                id: tempProduct!.id, name: controller.text))
+                            .whenComplete(() => getData());
+                  }
+                  clearData();
                 },
                 splashColor: Colors.white,
-                child: const Icon(
-                  Icons.add,
-                  color: Colors.black,
-                  size: 40,
-                ),
+                child: tempProduct == null
+                    ? const Icon(
+                        Icons.add,
+                        color: Colors.black,
+                        size: 40,
+                      )
+                    : const Icon(
+                        Icons.done,
+                        color: Colors.green,
+                        size: 40,
+                      ),
               )
             ],
           ),
@@ -87,7 +107,12 @@ class _MainBoardState extends State<MainBoard> {
                       label: 'Delete',
                     ),
                     SlidableAction(
-                      onPressed: (value) {},
+                      onPressed: (value) {
+                        setState(() {
+                          tempProduct = listProduct[index];
+                          controller.text = tempProduct!.name;
+                        });
+                      },
                       backgroundColor: Color(0xFF21B7CA),
                       foregroundColor: Colors.white,
                       icon: Icons.edit,
