@@ -1,10 +1,15 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:local_storage/database/connection/connection_db.dart';
 import 'package:local_storage/database/models/product_model.dart';
 import 'package:local_storage/database/views/add_product.dart';
+import 'package:local_storage/helper/utility.dart';
 
 class MainBoard extends StatefulWidget {
   const MainBoard({super.key});
@@ -173,16 +178,19 @@ class _MainBoardState extends State<MainBoard> {
         children: [
           Flexible(
             child: Container(
+              height: 200,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colors.blue,
-                  image: const DecorationImage(
-                      fit: BoxFit.cover,
-                      image: AssetImage('assets/image/1.jpg'))),
+                borderRadius: BorderRadius.circular(5),
+                color: Colors.blue,
+                image: DecorationImage(
+                    fit: BoxFit.cover, image: FileImage(File(pro.image))),
+              ),
+              //child: Text(Utility.dataFromBase64String(pro.image).toString()),
             ),
           ),
           Container(
             padding: const EdgeInsets.all(8),
+            color: Colors.white,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -190,11 +198,10 @@ class _MainBoardState extends State<MainBoard> {
                   pro.name,
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                Text('\$ 2.4 ',
+                Text('\$ ${pro.price}',
                     style: TextStyle(fontSize: 18, color: Colors.red)),
               ],
             ),
-            color: Colors.white,
           )
         ],
       ),
