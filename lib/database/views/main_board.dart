@@ -42,102 +42,7 @@ class _MainBoardState extends State<MainBoard> {
       appBar: AppBar(
         title: const Text('Database'),
       ),
-      body: Column(
-        children: [
-          /* Row(
-            children: [
-              Expanded(
-                flex: 3,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    controller: controller,
-                    decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: 'Enter ProductName'),
-                  ),
-                ),
-              ),
-              FloatingActionButton(
-                elevation: 0,
-                backgroundColor: Colors.white,
-                onPressed: () async {
-                  if (controller.text.isNotEmpty) {
-                    tempProduct == null
-                        ? await ConnectionDB()
-                            .insertProduct(ProductModel(
-                                id: DateTime.now().microsecond,
-                                name: controller.text))
-                            .whenComplete(() => getData())
-                        : await ConnectionDB()
-                            .updateProduct(ProductModel(
-                                id: tempProduct!.id, name: controller.text))
-                            .whenComplete(() => getData());
-                  }
-                  clearData();
-                },
-                splashColor: Colors.white,
-                child: tempProduct == null
-                    ? const Icon(
-                        Icons.add,
-                        color: Colors.black,
-                        size: 40,
-                      )
-                    : const Icon(
-                        Icons.done,
-                        color: Colors.green,
-                        size: 40,
-                      ),
-              )
-            ],
-          ),*/
-          Expanded(child: buildGridView())
-          // Expanded(
-          //   flex: 9,
-          //   child: ListView.builder(
-          //     itemCount: listProduct.length,
-          //     itemBuilder: (context, index) => Slidable(
-          //       key: const ValueKey(0),
-          //       endActionPane: ActionPane(
-          //         motion: const ScrollMotion(),
-          //         dismissible: DismissiblePane(onDismissed: () {}),
-          //         children: [
-          //           SlidableAction(
-          //             onPressed: (value) async {
-          //               await ConnectionDB()
-          //                   .deleteProduct(listProduct[index].id)
-          //                   .whenComplete(() => getData());
-          //             },
-          //             backgroundColor: Color(0xFFFE4A49),
-          //             foregroundColor: Colors.white,
-          //             icon: Icons.delete,
-          //             label: 'Delete',
-          //           ),
-          //           SlidableAction(
-          //             onPressed: (value) {
-          //               setState(() {
-          //                 tempProduct = listProduct[index];
-          //                 controller.text = tempProduct!.name;
-          //               });
-          //             },
-          //             backgroundColor: Color(0xFF21B7CA),
-          //             foregroundColor: Colors.white,
-          //             icon: Icons.edit,
-          //             label: 'Edit',
-          //           ),
-          //         ],
-          //       ),
-          //       child: Card(
-          //         elevation: 0,
-          //         child: ListTile(
-          //           title: Text(listProduct[index].name),
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // )
-        ],
-      ),
+      body: buildGridView(),
       floatingActionButton: Align(
         alignment: Alignment.bottomCenter,
         child: FloatingActionButton(
@@ -147,7 +52,9 @@ class _MainBoardState extends State<MainBoard> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const AddProduct(),
+                    builder: (context) => AddProduct(
+                      pro: null,
+                    ),
                   ));
             },
             splashColor: Colors.white,
@@ -172,38 +79,54 @@ class _MainBoardState extends State<MainBoard> {
   }
 
   Widget buildItemCard(ProductModel pro) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 8, top: 4, bottom: 4, right: 8),
-      child: Column(
-        children: [
-          Flexible(
-            child: Container(
-              height: 200,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                color: Colors.blue,
-                image: DecorationImage(
-                    fit: BoxFit.cover, image: FileImage(File(pro.image))),
-              ),
-              //child: Text(Utility.dataFromBase64String(pro.image).toString()),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            color: Colors.white,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  pro.name,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddProduct(pro: pro),
+            ));
+      },
+      onLongPress: () async {
+        await ConnectionDB().deleteProduct(pro.id).whenComplete(() {
+          setState(() {
+            getData();
+          });
+        });
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(left: 8, top: 4, bottom: 4, right: 8),
+        child: Column(
+          children: [
+            Flexible(
+              child: Container(
+                height: 200,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: Colors.blue,
+                  image: DecorationImage(
+                      fit: BoxFit.cover, image: FileImage(File(pro.image))),
                 ),
-                Text('\$ ${pro.price}',
-                    style: TextStyle(fontSize: 18, color: Colors.red)),
-              ],
+                //child: Text(Utility.dataFromBase64String(pro.image).toString()),
+              ),
             ),
-          )
-        ],
+            Container(
+              padding: const EdgeInsets.all(8),
+              color: Colors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    pro.name,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  Text('\$ ${pro.price}',
+                      style: TextStyle(fontSize: 18, color: Colors.red)),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -12,7 +12,8 @@ import 'package:local_storage/database/models/product_model.dart';
 import '../../helper/utility.dart';
 
 class AddProduct extends StatefulWidget {
-  const AddProduct({super.key});
+  AddProduct({super.key, required this.pro});
+  ProductModel? pro;
 
   @override
   State<AddProduct> createState() => _AddProductState();
@@ -23,11 +24,36 @@ class _AddProductState extends State<AddProduct> {
   TextEditingController priceController = TextEditingController();
   File? imgString;
 
+  clearData() {
+    nameController.text = '';
+    priceController.text = '';
+    imgString = null;
+  }
+
+  initData() {
+    nameController.text = widget.pro!.name;
+    priceController.text = widget.pro!.price.toString();
+    imgString = File(widget.pro!.image);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (widget.pro == null) {
+      clearData();
+    } else {
+      initData();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Product'),
+        title: widget.pro == null
+            ? const Text('Add Product')
+            : const Text('Update Product'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -63,9 +89,6 @@ class _AddProductState extends State<AddProduct> {
                       : SizedBox(
                           height: 250,
                           width: double.infinity,
-                          // child: Text(
-                          //     Utility.dataFromBase64String(imgString.toString())
-                          //         .toString()),
                           child: Image(
                             image: FileImage(File(imgString!.path)),
                           ),
@@ -124,11 +147,25 @@ class _AddProductState extends State<AddProduct> {
                   color: Theme.of(context).primaryColor,
                   child: const Text('save'),
                   onPressed: () async {
-                    ConnectionDB().insertProduct(ProductModel(
-                        id: DateTime.now().microsecondsSinceEpoch,
-                        name: nameController.text,
-                        price: double.parse(priceController.text),
-                        image: imgString!.path));
+                    widget.pro == null
+                        ? ConnectionDB()
+                            .insertProduct(ProductModel(
+                                id: DateTime.now().microsecondsSinceEpoch,
+                                name: nameController.text,
+                                price: double.parse(priceController.text),
+                                image: imgString!.path))
+                            .whenComplete(() {
+                            Navigator.pop(context);
+                          })
+                        : ConnectionDB()
+                            .updateProduct(ProductModel(
+                                id: widget.pro!.id,
+                                name: nameController.text,
+                                price: double.parse(priceController.text),
+                                image: imgString!.path))
+                            .whenComplete(() {
+                            Navigator.pop(context);
+                          });
                   }),
             )
           ],
